@@ -11,22 +11,27 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 
 import com.adl.main.model.WorkerModel;
+import com.adl.main.repository.ResponseDepartementWorker;
 import com.adl.main.repository.WorkerRepository;
 
 @RestController
+@RequestMapping("worker")
 public class WorkerController {
 	
 	@Autowired
 	WorkerRepository workerRepo;
 	
 	@GetMapping("/")
+
 	public List<WorkerModel> getIdWorker(){
 	List<WorkerModel> lstWorker=workerRepo.findAll();
 	return lstWorker;
@@ -42,48 +47,20 @@ public class WorkerController {
 		return workerRepo.save(worker);
 	}
 	
-	@DeleteMapping("/delete")
-	public String deleteWorker(@RequestParam("id")int worker) {
-		workerRepo.deleteById(worker);
+	@DeleteMapping("/delete/{id}")
+	public String deleteWorker(@PathVariable("id")int id) {
+		workerRepo.deleteById(id);
 		return "delete berhasil";
 	
 	}
 	
-	@GetMapping("/salaryHighest")
-	public ResponseEntity<String> getsSalaryHighest(){
-		List<WorkerModel> lstWorker = workerRepo.getSalaryHighest();
-		JSONArray list=new JSONArray();
-		
-		for (WorkerModel worker:lstWorker) {
-			JSONObject obj =new JSONObject();
-			obj.put("first_name",worker.getFirst_name());
-			obj.put("last_name",worker.getLast_name());
-			obj.put("salary",worker.getSalary());
-			list.put(obj);
-		}
-		
-		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list.toString());
-	}
 	
 	@GetMapping("/salarySame")
-	public ResponseEntity<String> getGroubBySameSalary(){
-		List<WorkerModel> lstWorker = workerRepo.getSalaryHighest();
-		JSONArray list=new JSONArray();
-		
-		
-		for (WorkerModel worker:lstWorker) {
-			JSONObject obj =new JSONObject();
-			obj.put("first_name",worker.getFirst_name());
-			obj.put("last_name",worker.getLast_name());
-			obj.put("salary",worker.getSalary());
-			list.put(obj);
-			
-		}
-		
-		return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.APPLICATION_JSON).body(list.toString());
+	public List<WorkerModel> getGroubBySameSalary(){
+		return workerRepo.getGroubBySameSalary();
 	}
 	@GetMapping("/numberOfDepartement")
-	public List<WorkerModel> list(){
+	public List<ResponseDepartementWorker> list(){
 		
 		return workerRepo.getGroubByDepartement();
 	}

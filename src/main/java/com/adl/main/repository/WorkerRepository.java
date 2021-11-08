@@ -11,12 +11,10 @@ import com.adl.main.model.WorkerModel;
 @Repository
 public interface WorkerRepository extends JpaRepository<WorkerModel,Integer>{
 	
-	@Query(value="select * from worker order by salary desc limit 5",nativeQuery=true)
-	List<WorkerModel> getSalaryHighest();
 	
-	@Query(value="select * from worker order by salary desc",nativeQuery=true)
+	@Query(value="SELECT* from worker where salary in(SELECT salary FROM `worker` group BY salary HAVING COUNT(*)>1)",nativeQuery=true)
 	List<WorkerModel> getGroubBySameSalary();
 	
-	@Query(value="select departement,count(*) from worker group by departement;",nativeQuery=true)
-	List<WorkerModel> getGroubByDepartement();
+	@Query(value="select departement,count(*)as jumlahOrang from worker group by departement;",nativeQuery=true)
+	List<ResponseDepartementWorker> getGroubByDepartement();
 }
